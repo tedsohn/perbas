@@ -1,0 +1,25 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# CAP
+gen/
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# BAS
+.vscode/
+.idea/
+
+# Coverage
+coverage/

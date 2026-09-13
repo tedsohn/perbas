@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Order Navy Intelligence</title>
+<style>
+  :root {
+    --s4-color: #0a6ed1;
+    --s4-bg: #eaf3fc;
+    --btp-color: #ff6600;
+    --btp-bg: #fff3e9;
+    --risk-high: #bb0000;
+    --risk-medium: #e9730c;
+    --risk-low: #107e3e;
+    --sent-negative: #bb0000;
+    --sent-neutral: #6a6d70;
+    --sent-positive: #107e3e;
+    --bg: #f5f6f7;
+    --card-bg: #ffffff;
+    --text: #32363a;
+    --text-muted: #6a6d70;
+    --border: #e5e5e5;
+    --shadow: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-hover: 0 6px 20px rgba(0,0,0,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "72", "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(180deg, #eef1f5 0%, #f5f6f7 220px);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 24px 64px;
+  }
+
+  .page { max-width: 980px; margin: 0 auto; }
+
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .brand .logo {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0a1a3c, #000814);
+    display: flex; align-items: center; justify-content: center;
+    color: #D4AF37; font-weight: 700; font-size: 22px;
+    box-shadow: 0 4px 12px rgba(0,8,20,0.45);
+    border: 2px solid #B8860B;
+  }
+
+  .brand h1 { font-size: 20px; font-weight: 700; }
+  .brand h1 .navy-word { color: #B8860B; font-weight: 800; }
+  .brand p { font-size: 13px; color: var(--text-muted); }
+
+  .badge-pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .badge-s4 { background: var(--s4-bg); color: var(--s4-color); }
+  .badge-btp { background: var(--btp-bg); color: var(--btp-color); }
+
+  .search-bar {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+  }
+
+  .search-bar label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  select, button.analyze {
+    font-family: inherit;
+    font-size: 14px;
+  }
+
+  select {
+    flex: 1;
+    min-width: 220px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #c7c9cc;
+    background: #fff;
+    color: var(--text);
+  }
+
+  button.analyze {
+    background: linear-gradient(135deg, #0a6ed1, #085caf);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 4px 12px rgba(10,110,209,0.3);
+  }
+  button.analyze:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(10,110,209,0.4); }
+  button.analyze:active { transform: translateY(0); }
+  button.analyze:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+  #status { font-size: 13px; color: var(--text-muted); min-height: 18px; margin-bottom: 8px; }
+  #status.error { color: var(--risk-high); font-weight: 600; }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid #dcdcdc;
+    border-top-color: var(--s4-color);
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #results { display: none; }
+  #results.visible {
+    display: block;
+    animation: fadeUp 0.4s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .summary-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--s4-color);
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+
+  .summary-card .head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; flex-wrap: wrap; gap: 10px;
+  }
+
+  .summary-card h2 { font-size: 17px; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .summary-grid .field .k { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; }
+  .summary-grid .field .v { font-size: 16px; font-weight: 700; }
+
+  .items-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .items-table th {
+    text-align: left; color: var(--text-muted); font-weight: 600;
+    padding: 6px 8px; border-bottom: 1px solid var(--border);
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .items-table td { padding: 8px 8px; border-bottom: 1px solid #f0f0f0; }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+  }
+
+  .insight-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--btp-color);
+    padding: 20px 22px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .insight-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+  .insight-card .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .insight-card h3 { font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .insight-card .icon { font-size: 18px; }
+
+  .risk-gauge-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .risk-gauge { position: relative; width: 74px; height: 74px; flex-shrink: 0; }
+  .risk-gauge svg { transform: rotate(-90deg); }
+  .risk-gauge .pct {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 800;
+  }
+
+  .level-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .level-High, .level-Negative { background: #fde7e9; color: var(--risk-high); }
+  .level-Medium, .level-Neutral { background: #fdf1e0; color: var(--risk-medium); }
+  .level-Low, .level-Positive { background: #e6f4ec; color: var(--risk-low); }
+
+  .factor-text { font-size: 13px; color: var(--text); line-height: 1.5; margin-top: 4px; }
+  .sub-meta { font-size: 12px; color: var(--text-muted); margin-top: 10px; display: flex; justify-content: space-between; }
+
+  .confidence-bar-track {
+    width: 100%; height: 8px; border-radius: 6px; background: #edeef0; overflow: hidden; margin-top: 10px;
+  }
+  .confidence-bar-fill {
+    height: 100%; border-radius: 6px;
+    background: linear-gradient(90deg, #0a6ed1, #38bcd8);
+    transition: width 0.6s ease;
+  }
+
+  .delay-row { display: flex; align-items: baseline; gap: 8px; margin: 10px 0; }
+  .delay-row .num { font-size: 28px; font-weight: 800; }
+  .delay-row .lbl { font-size: 12px; color: var(--text-muted); }
+  .delay-ok { color: var(--risk-low); }
+  .delay-warn { color: var(--risk-medium); }
+  .delay-bad { color: var(--risk-high); }
+
+  .escalation-flag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; margin-top: 10px;
+    padding: 5px 10px; border-radius: 8px;
+  }
+  .escalation-yes { background: #fde7e9; color: var(--risk-high); }
+  .escalation-no { background: #e6f4ec; color: var(--risk-low); }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--text-muted);
+  }
+  .empty-state .big { font-size: 40px; margin-bottom: 10px; }
+
+  footer.note {
+    margin-top: 32px; text-align: center; font-size: 12px; color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">⚓</div>
+        <div>
+          <h1>Sales Order <span class="navy-word">Navy</span> Intelligence</h1>
+          <p>AI-driven Navy insights for customer service &amp; sales coordination</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <span class="badge-pill badge-s4">● S/4HANA Core</span>
+        <span class="badge-pill badge-btp">● BTP HDI Insights</span>
+      </div>
+    </header>
+
+    <div class="search-bar">
+      <label for="orderSelect">Sales Order</label>
+      <select id="orderSelect">
+        <option value="0000000001">0000000001 — High risk example</option>
+        <option value="0000000002">0000000002 — Low risk example</option>
+        <option value="0000000003">0000000003 — Medium risk example</option>
+      </select>
+      <button class="analyze" id="analyzeBtn">Analyze Order</button>
+    </div>
+
+    <div id="status"></div>
+
+    <div id="results">
+      <div class="summary-card" id="summaryCard"></div>
+      <div class="insight-grid" id="insightGrid"></div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="big">🔎</div>
+      <div>Select a sales order above and click <strong>Analyze Order</strong> to merge live S/4 data with BTP AI insights.</div>
+    </div>
+
+    <footer class="note">
+      S/4HANA fields are fetched live at request time · BTP HDI fields are Navy Legacy data + AI-generated scores · Clean Core Side by Side Extension with HANA Cloud</footer>
+  </div>
+
+<script>
+const SERVICE_PATH = '/odata/v4/sales-order-intelligence';
+
+const btn = document.getElementById('analyzeBtn');
+const select = document.getElementById('orderSelect');
+const status = document.getElementById('status');
+const results = document.getElementById('results');
+const emptyState = document.getElementById('emptyState');
+const summaryCard = document.getElementById('summaryCard');
+const insightGrid = document.getElementById('insightGrid');
+
+function fmtMoney(v, currency) {
+  if (v === null || v === undefined) return '—';
+  const n = Number(v);
+  return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + (currency || '');
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  if (isNaN(dt.getTime())) return d;
+  return dt.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function riskColor(level) {
+  if (level === 'High' || level === 'Critical') return '#bb0000';
+  if (level === 'Medium') return '#e9730c';
+  return '#107e3e';
+}
+
+function gaugeSvg(pct, color) {
+  const r = 30, c = 2 * Math.PI * r;
+  const offset = c - (Math.min(Math.max(pct, 0), 100) / 100) * c;
+  return `
+    <svg width="74" height="74" viewBox="0 0 74 74">
+      <circle cx="37" cy="37" r="${r}" stroke="#edeef0" stroke-width="8" fill="none" />
+      <circle cx="37" cy="37" r="${r}" stroke="${color}" stroke-width="8" fill="none"
+        stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}" />
+    </svg>`;
+}
+
+function renderSummary(data) {
+  const itemsRows = (data.items || []).map(it => `
+    <tr>
+      <td>${it.material}</td>
+      <td>${it.quantity}</td>
+      <td>${it.plant}</td>
+    </tr>`).join('');
+
+  summaryCard.innerHTML = `
+    <div class="head">
+      <h2>Sales Order ${data.salesOrder}</h2>
+      <span class="badge-pill badge-s4">● S/4: Live Data</span>
+    </div>
+    <div class="summary-grid">
+      <div class="field"><div class="k">Customer</div><div class="v">${data.customer ?? '—'}</div></div>
+      <div class="field"><div class="k">Net Value</div><div class="v">${fmtMoney(data.netValue, data.currency)}</div></div>
+      <div class="field"><div class="k">Line Items</div><div class="v">${(data.items || []).length}</div></div>
+    </div>
+    <table class="items-table">
+      <thead><tr><th>Material</th><th>Quantity</th><th>Plant</th></tr></thead>
+      <tbody>${itemsRows}</tbody>
+    </table>
+  `;
+}
+
+function renderRiskCard(risk) {
+  if (!risk) return `<div class="insight-card"><h3>⚠️ Order Risk</h3><p class="factor-text">No risk data available.</p></div>`;
+  const color = riskColor(risk.level);
+  const score = Number(risk.score) || 0;
+  return `
+    <div class="insight-card">
+      <div class="head">
+        <h3><span class="icon">⚠️</span> Order Risk</h3>
+        <span class="badge-pill badge-btp">● BTP HDI</span>
+      </div>
+      <div class="risk-gauge-wrap">
+        <div class="risk-gauge">
+          ${gaugeSvg(score, color)}
+          <div class="pct" style="color:${color}">${score.toFixed(0)}%</div>
+        </div>
+        <div>
+          <span class="level-tag level-${risk.level}">${risk.level} risk</span>
+          <div class="factor-text">${risk.factors || ''}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderDeliveryCard(delivery) {
+  if (!delivery) return `<div class="insight-card"><h3>🚚 Delivery Prediction</h3><p class="factor-text">No delivery data available.</p></div>`;
+  const days = Number(delivery.delayDays) || 0;
+  const delayClass = days === 0 ? 'delay-ok' : (days <= 3 ? 'delay-warn' : 'delay-bad');
+  const conf = Number(delivery.confidence) || 0;
+  return `
+    <div class="insight-card">
+      <div class="head">
+        <h3><span class="icon">🚚</span> Delivery Prediction</h3>
+        <span class="badge-pill badge-btp">● BTP HDI</span>
+      </div>
+      <div class="delay-row">
+        <span class="num ${delayClass}">${days === 0 ? 'On time' : '+' + days}</span>
+        <span class="lbl">${days === 0 ? '' : 'day(s) delay'}</span>
+      </div>
+      <div class="sub-meta">
+        <span>${fmtDate(delivery.originalDate)} → ${fmtDate(delivery.predictedDate)}</span>
+      </div>
+      <div class="factor-text">${delivery.reason || ''}</div>
+      <div class="sub-meta"><span>Prediction confidence</span><span>${conf.toFixed(0)}%</span></div>
+      <div class="confidence-bar-track"><div class="confidence-bar-fill" style="width:${conf}%"></div></div>
+    </div>
+  `;
+}
+
+function renderSentimentCard(sentiment, customer) {
+  if (!sentiment) return `<div class="insight-card"><h3>⚓ Navy Legacy</h3><p class="factor-text">No legacy system data available.</p></div>`;
+  const escalation = !!sentiment.escalationRisk;
+  const legacyId = 'NAVY-LGCY-' + (customer || '—');
+  return `
+    <div class="insight-card">
+      <div class="head">
+        <h3><span class="icon">⚓</span> Navy Legacy</h3>
+        <span class="badge-pill badge-btp">● BTP HDI</span>
+      </div>
+      <span class="level-tag level-${sentiment.label}">${sentiment.label}</span>
+      <div class="sub-meta" style="margin-top:12px;">
+        <span>Legacy System ID</span><span>${legacyId}</span>
+      </div>
+      <div class="sub-meta">
+        <span>Last Sync Date</span><span>${fmtDate(sentiment.lastSyncDate)}</span>
+      </div>
+      <span class="escalation-flag ${escalation ? 'escalation-yes' : 'escalation-no'}">
+        ${escalation ? '🚨 Escalation risk' : '✓ No escalation risk'}
+      </span>
+    </div>
+  `;
+}
+
+async function analyze() {
+  const salesOrder = select.value;
+  status.className = '';
+  status.innerHTML = '<span class="spinner"></span> Fetching live S/4 data and BTP AI insights…';
+  results.classList.remove('visible');
+  emptyState.style.display = 'none';
+  btn.disabled = true;
+
+  try {
+    const url = `${SERVICE_PATH}/getOrderIntelligence(salesOrder='${encodeURIComponent(salesOrder)}')`;
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Request failed (${res.status}): ${text.slice(0, 200)}`);
+    }
+    const data = await res.json();
+
+    renderSummary(data);
+    insightGrid.innerHTML =
+      renderSentimentCard(data.sentiment, data.customer) +
+      renderRiskCard(data.risk) +
+      renderDeliveryCard(data.delivery);
+
+    status.innerHTML = '';
+    results.classList.add('visible');
+  } catch (err) {
+    status.className = 'error';
+    status.textContent = '⚠ ' + err.message;
+    emptyState.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+btn.addEventListener('click', analyze);
+</script>
+</body>
+</html>

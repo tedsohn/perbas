@@ -1,0 +1,4 @@
+ID,customer,sentimentScore,sentimentLabel,openComplaints30d,escalationRisk,lastInteractionDate,lastInteractionType
+c3333333-3333-3333-3333-333333333301,0000100001,-45.0,Negative,3,true,2026-08-22,Ticket
+c3333333-3333-3333-3333-333333333302,0000100002,60.0,Positive,0,false,2026-08-15,Survey
+c3333333-3333-3333-3333-333333333303,0000100003,5.0,Neutral,1,false,2026-08-18,Email

@@ -1,0 +1,29 @@
+{
+  "name": "so-exception",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cds-serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@cap-js/hana": "^3.0.2",
+    "@sap/cds": "^10.0.6"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^3.0.2",
+    "@sap/cds-dk": "^10.0.7"
+  },
+  "cds": {
+    "requires": {
+      "auth": {
+        "kind": "dummy"
+      }
+    }
+  }
+}

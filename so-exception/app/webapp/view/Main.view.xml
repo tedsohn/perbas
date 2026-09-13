@@ -1,0 +1,183 @@
+<mvc:View
+  controllerName="navyintel.controller.Main"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:l="sap.ui.layout"
+  displayBlock="true"
+  class="navyRoot">
+
+  <Page showHeader="false" class="navyPage">
+    <content>
+
+      <!-- Header -->
+      <l:Grid defaultSpan="L12 M12 S12" class="navyHeaderBar">
+        <HBox justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap" class="sapUiSmallMarginBottom">
+          <HBox alignItems="Center">
+            <core:Icon src="sap-icon://anchor" class="navyLogo" />
+            <VBox class="sapUiTinyMarginBegin">
+              <HBox alignItems="Baseline">
+                <Title text="Sales Order" level="H2" class="navyTitle" />
+                <Title text="Navy" level="H2" class="navyTitle navyGoldWord sapUiTinyMarginBeginEnd" />
+                <Title text="Intelligence" level="H2" class="navyTitle" />
+              </HBox>
+              <Label text="AI-driven Navy insights for customer service and sales coordination" class="navySubtitle" />
+            </VBox>
+          </HBox>
+          <HBox class="sapUiSmallMarginTop">
+            <ObjectStatus text="S/4HANA Core" state="Information" icon="sap-icon://database" class="sapUiTinyMarginEnd" />
+            <ObjectStatus text="BTP HDI Insights" state="Warning" icon="sap-icon://cloud" />
+          </HBox>
+        </HBox>
+      </l:Grid>
+
+      <!-- Search bar -->
+      <Toolbar class="navySearchBar">
+        <Label text="Sales Order" class="sapUiTinyMarginEnd" />
+        <Select id="orderSelect" width="18rem" selectedKey="0000000001">
+          <core:Item key="0000000001" text="0000000001 — High risk example" />
+          <core:Item key="0000000002" text="0000000002 — Low risk example" />
+          <core:Item key="0000000003" text="0000000003 — Medium risk example" />
+        </Select>
+        <ToolbarSpacer />
+        <Button text="Analyze Order" type="Emphasized" press="onAnalyze" class="navyAnalyzeBtn" />
+      </Toolbar>
+
+      <MessageStrip
+        text="{ui>/statusText}"
+        type="Error"
+        showIcon="true"
+        visible="{ui>/errorVisible}"
+        class="sapUiSmallMarginTop sapUiSmallMarginBottom" />
+
+      <HBox justifyContent="Center" visible="{ui>/busy}" class="sapUiMediumMarginTop">
+        <BusyIndicator size="1rem" />
+        <Text text="Fetching live S/4 data and BTP AI insights…" class="sapUiTinyMarginBegin" />
+      </HBox>
+
+      <!-- Results -->
+      <VBox visible="{ui>/resultsVisible}" class="navyResults">
+
+        <Panel class="navyCard navyCardS4">
+          <VBox>
+            <HBox justifyContent="SpaceBetween" alignItems="Center">
+              <Title text="{ui>/order/title}" level="H3" />
+              <ObjectStatus text="S/4: Live Data" state="Information" />
+            </HBox>
+            <l:Grid defaultSpan="L4 M4 S12" class="sapUiSmallMarginTop">
+              <VBox class="navyField">
+                <Label text="CUSTOMER" class="navyFieldKey" />
+                <Text text="{ui>/order/customer}" class="navyFieldValue" />
+              </VBox>
+              <VBox class="navyField">
+                <Label text="NET VALUE" class="navyFieldKey" />
+                <Text text="{ui>/order/netValueFormatted}" class="navyFieldValue" />
+              </VBox>
+              <VBox class="navyField">
+                <Label text="LINE ITEMS" class="navyFieldKey" />
+                <Text text="{ui>/order/itemCount}" class="navyFieldValue" />
+              </VBox>
+            </l:Grid>
+            <Table items="{ui>/order/items}" class="sapUiSmallMarginTop navyItemsTable">
+              <columns>
+                <Column><Text text="Material" /></Column>
+                <Column><Text text="Quantity" /></Column>
+                <Column><Text text="Plant" /></Column>
+              </columns>
+              <items>
+                <ColumnListItem>
+                  <cells>
+                    <Text text="{ui>material}" />
+                    <Text text="{ui>quantity}" />
+                    <Text text="{ui>plant}" />
+                  </cells>
+                </ColumnListItem>
+              </items>
+            </Table>
+          </VBox>
+        </Panel>
+
+        <l:Grid defaultSpan="L4 M6 S12" class="navyInsightGrid">
+
+          <!-- Navy Legacy -->
+          <Panel class="navyCard navyCardBtp">
+            <VBox>
+              <HBox justifyContent="SpaceBetween" alignItems="Center">
+                <Title text="⚓ Navy Legacy" level="H4" />
+                <ObjectStatus text="BTP HDI" state="Warning" />
+              </HBox>
+              <ObjectStatus
+                text="{ui>/sentiment/label}"
+                state="{ui>/sentiment/state}"
+                class="sapUiSmallMarginTop navyLevelTag" />
+              <HBox justifyContent="SpaceBetween" class="sapUiSmallMarginTop navySubMeta">
+                <Text text="Legacy System ID" />
+                <Text text="{ui>/sentiment/legacyId}" />
+              </HBox>
+              <HBox justifyContent="SpaceBetween" class="navySubMeta">
+                <Text text="Last Sync Date" />
+                <Text text="{ui>/sentiment/lastSyncDateFormatted}" />
+              </HBox>
+              <ObjectStatus
+                text="{ui>/sentiment/escalationText}"
+                state="{ui>/sentiment/escalationState}"
+                icon="sap-icon://alert"
+                class="sapUiSmallMarginTop" />
+            </VBox>
+          </Panel>
+
+          <!-- Order Risk -->
+          <Panel class="navyCard navyCardBtp">
+            <VBox>
+              <HBox justifyContent="SpaceBetween" alignItems="Center">
+                <Title text="⚠️ Order Risk" level="H4" />
+                <ObjectStatus text="BTP HDI" state="Warning" />
+              </HBox>
+              <HBox alignItems="Center" class="sapUiSmallMarginTop">
+                <core:HTML content="{ui>/risk/gaugeSvg}" class="navyGauge" />
+                <VBox class="sapUiSmallMarginBegin">
+                  <ObjectStatus text="{ui>/risk/level}" state="{ui>/risk/state}" class="navyLevelTag" />
+                  <Text text="{ui>/risk/factors}" class="navyFactorText sapUiTinyMarginTop" />
+                </VBox>
+              </HBox>
+            </VBox>
+          </Panel>
+
+          <!-- Delivery -->
+          <Panel class="navyCard navyCardBtp">
+            <VBox>
+              <HBox justifyContent="SpaceBetween" alignItems="Center">
+                <Title text="🚚 Delivery Prediction" level="H4" />
+                <ObjectStatus text="BTP HDI" state="Warning" />
+              </HBox>
+              <Title text="{ui>/delivery/delayText}" level="H1" class="navyDelayNum {ui>/delivery/delayClass}" />
+              <Text text="{ui>/delivery/dateRange}" class="navySubMetaText" />
+              <Text text="{ui>/delivery/reason}" class="navyFactorText" />
+              <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginTop navySubMeta">
+                <Text text="Prediction confidence" />
+                <Text text="{ui>/delivery/confidenceText}" />
+              </HBox>
+              <ProgressIndicator
+                percentValue="{ui>/delivery/confidence}"
+                displayValue=""
+                state="Success"
+                class="sapUiTinyMarginTop" />
+            </VBox>
+          </Panel>
+
+        </l:Grid>
+      </VBox>
+
+      <VBox visible="{ui>/emptyVisible}" alignItems="Center" class="navyEmptyState sapUiLargeMarginTop">
+        <core:Icon src="sap-icon://search" size="2.5rem" class="sapUiSmallMarginBottom" />
+        <Text text="Select a sales order above and click Analyze Order to merge live S/4 data with BTP AI insights." textAlign="Center" />
+      </VBox>
+
+      <Text
+        text="S/4HANA fields are fetched live at request time · BTP HDI fields are Navy Legacy data + AI-generated scores · Clean Core Side-by-Side Extension with HANA Cloud"
+        class="navyFooterNote sapUiLargeMarginTop"
+        textAlign="Center" />
+
+    </content>
+  </Page>
+</mvc:View>

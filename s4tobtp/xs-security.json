@@ -1,0 +1,15 @@
+{
+  "xsappname": "s4tobtp",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    { "name": "$XSAPPNAME.PublishLegacyFields", "description": "Publish legacy fields from S/4" }
+  ],
+  "role-templates": [
+    { "name": "LegacyPublisher", "scope-references": ["$XSAPPNAME.PublishLegacyFields"] }
+  ],
+  "oauth2-configuration": {
+    "credential-types": ["binding-secret", "x509"]
+  },
+  "authorities": ["$XSAPPNAME.PublishLegacyFields"]
+}
+

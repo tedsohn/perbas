@@ -1,0 +1,4 @@
+ID,salesOrder,originalDeliveryDate,predictedDeliveryDate,delayDays,delayReason,confidenceScore,inboundShipmentDelay,transportConstraint
+b2222222-2222-2222-2222-222222222201,0000000001,2026-09-05,2026-09-10,5,"Delayed inbound material shipment from primary supplier",78.0,true,false
+b2222222-2222-2222-2222-222222222202,0000000002,2026-09-02,2026-09-02,0,"No known constraints",95.0,false,false
+b2222222-2222-2222-2222-222222222203,0000000003,2026-09-08,2026-09-11,3,"Regional transport capacity constraint",62.0,false,true

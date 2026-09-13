@@ -1,0 +1,9 @@
+applications:
+  - name: so-exception
+    memory: 256M
+    instances: 1
+    buildpacks:
+      - nodejs_buildpack
+    command: npm start
+    services:
+      - so-exception-db

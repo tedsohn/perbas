@@ -1,0 +1,7 @@
+applications:
+  - name: hello-world-test
+    memory: 128M
+    instances: 1
+    buildpacks:
+      - nodejs_buildpack
+    command: node server.js

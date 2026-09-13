@@ -1,0 +1,140 @@
+html, body {
+  height: 100%;
+}
+
+.navyPage {
+  background: linear-gradient(180deg, #eef1f5 0%, #f5f6f7 220px);
+}
+
+.navyHeaderBar {
+  padding: 16px 16px 0 16px;
+}
+
+.navyLogo {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0a1a3c, #000814);
+  color: #D4AF37;
+  font-size: 22px;
+  border: 2px solid #B8860B;
+  box-shadow: 0 4px 12px rgba(0,8,20,0.45);
+}
+
+.navyTitle {
+  font-weight: 700 !important;
+}
+
+.navyGoldWord {
+  color: #B8860B !important;
+  font-weight: 800 !important;
+}
+
+.navySubtitle {
+  color: #6a6d70;
+  font-size: 0.8rem;
+}
+
+.navySearchBar {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e5e5;
+  margin: 16px;
+  padding: 8px 12px;
+}
+
+.navyAnalyzeBtn {
+  background: linear-gradient(135deg, #0a6ed1, #085caf) !important;
+  border: none !important;
+}
+
+.navyResults {
+  padding: 0 16px;
+}
+
+.navyCard {
+  border-radius: 14px !important;
+  border: 1px solid #e5e5e5 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 18px;
+}
+
+.navyCardS4 {
+  border-left: 5px solid #0a6ed1 !important;
+}
+
+.navyCardBtp {
+  border-left: 5px solid #ff6600 !important;
+}
+
+.navyField .navyFieldKey {
+  font-size: 0.68rem;
+  color: #6a6d70;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.navyField .navyFieldValue {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.navyInsightGrid {
+  margin-top: 4px;
+}
+
+.navyGauge {
+  width: 74px;
+  height: 74px;
+  flex-shrink: 0;
+}
+
+.navyLevelTag {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.navyFactorText {
+  font-size: 0.8rem;
+  color: #32363a;
+  line-height: 1.5;
+}
+
+.navySubMeta {
+  font-size: 0.75rem;
+  color: #6a6d70;
+  margin-top: 6px;
+}
+
+.navySubMetaText {
+  font-size: 0.75rem;
+  color: #6a6d70;
+}
+
+.navyDelayNum {
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  margin-top: 4px;
+}
+
+.navyDelayOk { color: #107e3e !important; }
+.navyDelayWarn { color: #e9730c !important; }
+.navyDelayBad { color: #bb0000 !important; }
+
+.navyEmptyState {
+  color: #6a6d70;
+  padding: 40px 20px;
+}
+
+.navyFooterNote {
+  display: block;
+  color: #6a6d70;
+  font-size: 0.75rem;
+  padding: 8px 16px 32px 16px;
+}
+
+.navyItemsTable {
+  margin-top: 8px;
+}
