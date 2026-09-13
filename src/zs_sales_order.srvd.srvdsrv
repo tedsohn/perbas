@@ -1,0 +1,5 @@
+@EndUserText.label: 'ZS_SALES_ORDER'
+define service ZS_SALES_ORDER {
+  expose ZC_SalesOrderHeader;
+  expose ZC_SalesOrderItem;
+}
